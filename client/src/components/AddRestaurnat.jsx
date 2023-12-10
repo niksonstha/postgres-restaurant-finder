@@ -46,6 +46,7 @@ const AddRestaurnat = () => {
         isRequired
         display={"flex"}
         flexDirection={"column"}
+        gap={5}
         color={"#FAF6F0"}
       >
         <Box>
@@ -94,7 +95,7 @@ const AddRestaurnat = () => {
           </Select>
         </Box>
         <Button
-          colorScheme="blue"
+          bgColor={"#9EC8B9"}
           mt={6}
           width={"100px"}
           onClick={submitHandler}
