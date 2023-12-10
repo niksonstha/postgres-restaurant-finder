@@ -1,0 +1,104 @@
+const db = require("./db");
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+//? get all resturants
+app.get("/api/v1/restaurants", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM resturant");
+
+    res.status(200).json({
+      status: "success",
+      results: result.rows.length,
+      data: {
+        resturants: result.rows,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//? get single resturant
+app.get("/api/v1/getRestaurants/:id", async (req, res) => {
+  try {
+    console.log(req.params);
+    const id = req.params.id;
+    const result = await db.query("SELECT * FROM resturant WHERE id = $1", [
+      id,
+    ]);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        resturant: result.rows[0],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//? Create resturant
+app.post("/api/v1/restaurants", async (req, res) => {
+  try {
+    const { name, location, price_range } = req.body;
+    const result = await db.query(
+      "INSERT INTO resturant (name, location, price_range) VALUES ($1, $2, $3) RETURNING *",
+      [name, location, price_range]
+    );
+    res.status(200).json({
+      status: "success",
+      data: {
+        resturant: result.rows[0],
+      },
+    });
+
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//? Update resturant
+app.put("/api/v1/restaurants/:id", async (req, res) => {
+  const { name, location, price_range } = req.body;
+  const { id } = req.params;
+  try {
+    const result = await db.query(
+      "UPDATE resturant SET name = $1, location = $2, price_range = $3 where id = $4 RETURNING *",
+      [name, location, price_range, id]
+    );
+    res.status(200).json({
+      status: "success",
+      data: {
+        resturant: result.rows,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//? Delete resturant
+app.delete("/api/v1/restaurants/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await db.query("DELETE FROM resturant WHERE id = $1", [id]);
+    res.status(204).json({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("App is running in port: ", process.env.PORT);
+});
