@@ -5,6 +5,7 @@ export const RestaurantsContext = createContext();
 
 export const RestaurantsContextProvider = ({ children }) => {
   const [restaurants, setRestaurants] = useState([]);
+
   const addRestaurant = (newRestaurant) => {
     setRestaurants([...restaurants, newRestaurant]);
   };
